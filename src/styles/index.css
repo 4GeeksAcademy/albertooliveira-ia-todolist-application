@@ -3,98 +3,84 @@ body {
     margin: 0;
     display: flex;
     justify-content: center;
-    font-family: Arial, sans-serif;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-.main-container {
-    width: 100%;
-    max-width: 500px;
-    padding-top: 50px;
+.todo-container {
+    width: 500px;
+    margin-top: 50px;
 }
 
-.todo-title {
+.todo-header {
     font-size: 100px;
-    color: rgba(175, 47, 47, 0.15);
     text-align: center;
-    margin: 0;
+    color: rgba(175, 47, 47, 0.15);
+    font-weight: 100;
 }
 
-.todo-box {
+.todo-card-body {
     background: white;
     border: 1px solid #ddd;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
-.input-section {
-    padding: 15px 20px;
+.input-row {
+    padding: 15px 40px;
     border-bottom: 1px solid #eee;
 }
 
-.task-input {
+.task-input-field {
     width: 100%;
     border: none;
     font-size: 24px;
     outline: none;
+    font-weight: 200;
 }
 
-.task-input::placeholder {
+.error-message {
+    padding: 15px 40px;
+    color: #ff0000;
+    background-color: #fff1f1;
     font-style: italic;
-    color: #e6e6e6;
+    border-bottom: 1px solid #eee;
 }
 
-.todo-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.todo-item {
-    display: flex;
+.task-item-row {
+    display: flex !important;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 25px;
+    padding: 15px 40px;
     border-bottom: 1px solid #eee;
-    min-height: 60px;
-}
-
-.task-text {
     font-size: 24px;
     color: #4d4d4d;
 }
 
-.delete-btn {
+.del-btn {
     display: none;
     background: none;
     border: none;
     color: #af5b5e;
     font-size: 20px;
-    font-weight: bold;
     cursor: pointer;
+    font-weight: bold;
 }
 
-.todo-item:hover .delete-btn {
+.task-item-row:hover .del-btn {
     display: block;
 }
 
-.todo-footer {
+.footer-row {
     padding: 10px 15px;
     color: #777;
     font-size: 14px;
-    text-align: left;
 }
 
-.no-tasks {
-    padding: 20px;
+.empty-msg {
+    padding: 20px 40px;
     color: #ccc;
     font-style: italic;
-    text-align: center;
 }
 
-.paper-effect-1, .paper-effect-2 {
-    height: 5px;
-    background: white;
-    border: 1px solid #ddd;
-    margin: 0 auto;
-}
-.paper-effect-1 { width: 98%; }
-.paper-effect-2 { width: 96%; }
+.page-stack { height: 5px; background: white; border: 1px solid #ddd; border-top: none; margin: 0 auto; }
+.stack-1 { width: 99%; }
+.stack-2 { width: 98%; }

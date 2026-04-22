@@ -15,7 +15,7 @@ const MainApp = () => {
 	};
 
 	return (
-		<div className="main-container">
+		<div className="main-wrapper">
 			<Home tasks={tasks} addTask={addTask} deleteTask={deleteTask} />
 		</div>
 	);
