@@ -1,28 +1,61 @@
-import React from "react";
+import React, { useState } from "react";
+import PropTypes from "prop-types";
 
-//include images into your bundle
-import rigoImage from "../../img/rigo-baby.jpg";
+const Home = (props) => {
+	const [inputValue, setInputValue] = useState("");
 
-//create your first component
-const Home = () => {
+	const handleKeyPress = (e) => {
+		if (e.key === "Enter" && inputValue.trim() !== "") {
+			props.addTask(inputValue.trim());
+			setInputValue(""); 
+		}
+	};
+
 	return (
-		<div className="text-center">
-            
-
-			<h1 className="text-center mt-5">Hello Rigo!</h1>
-			<p>
-				<img src={rigoImage} />
-			</p>
-			<a href="#" className="btn btn-success">
-				If you see this green button... bootstrap is working...
-			</a>
-			<p>
-				Made by{" "}
-				<a href="http://www.4geeksacademy.com">4Geeks Academy</a>, with
-				love!
-			</p>
+		<div className="todo-wrapper">
+			<h1 className="todo-title">All Tasks</h1>
+			<div className="todo-box">
+				<div className="input-section">
+					<input
+						type="text"
+						className="task-input"
+						placeholder="What needs to be done?"
+						value={inputValue}
+						onChange={(e) => setInputValue(e.target.value)}
+						onKeyDown={handleKeyPress}
+					/>
+				</div>
+				<ul className="todo-list">
+					{props.tasks.length === 0 ? (
+						<li className="no-tasks">No tasks, add a new task</li>
+					) : (
+						props.tasks.map((task, index) => (
+							<li key={index} className="todo-item">
+								<span className="task-text">{task}</span>
+								<button 
+									className="delete-btn"
+									onClick={() => props.deleteTask(index)}
+								>
+									X
+								</button>
+							</li>
+						))
+					)}
+				</ul>
+				<div className="todo-footer">
+					{props.tasks.length} item{props.tasks.length !== 1 ? "s" : ""} left
+				</div>
+			</div>
+			<div className="paper-effect-1"></div>
+			<div className="paper-effect-2"></div>
 		</div>
 	);
+};
+
+Home.propTypes = {
+	tasks: PropTypes.array.isRequired,
+	addTask: PropTypes.func.isRequired,
+	deleteTask: PropTypes.func.isRequired
 };
 
 export default Home;

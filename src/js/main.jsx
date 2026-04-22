@@ -1,18 +1,24 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
+import React, { useState } from "react";
+import ReactDOM from "react-dom/client";
+import "../styles/index.css";
+import Home from "./components/Home.jsx";
 
-//Bootstrap
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap"
+const MainApp = () => {
+	const [tasks, setTasks] = useState([]);
 
-// index.css'
-import '../styles/index.css'
+	const addTask = (newTask) => {
+		setTasks([...tasks, newTask]);
+	};
 
-// components
-import Home from './components/Home';
+	const deleteTask = (indexToDelete) => {
+		setTasks(tasks.filter((_, index) => index !== indexToDelete));
+	};
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <Home/>
-  </React.StrictMode>,
-)
+	return (
+		<div className="main-container">
+			<Home tasks={tasks} addTask={addTask} deleteTask={deleteTask} />
+		</div>
+	);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<MainApp />);
