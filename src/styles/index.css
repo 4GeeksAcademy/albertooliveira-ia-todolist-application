@@ -12,16 +12,32 @@ body {
 }
 
 .todo-header {
-    font-size: 100px;
+    font-size: 80px;
     text-align: center;
     color: rgba(175, 47, 47, 0.15);
     font-weight: 100;
+    margin-bottom: 20px;
 }
 
 .todo-card-body {
     background: white;
     border: 1px solid #ddd;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.spinner-loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.8);
+    color: #d9534f;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    z-index: 10;
 }
 
 .input-row {
@@ -37,50 +53,83 @@ body {
     font-weight: 200;
 }
 
-.error-message {
-    padding: 15px 40px;
-    color: #ff0000;
-    background-color: #fff1f1;
-    font-style: italic;
-    border-bottom: 1px solid #eee;
-}
-
 .task-item-row {
-    display: flex !important;
+    display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 40px;
+    padding: 15px 20px 15px 40px;
     border-bottom: 1px solid #eee;
     font-size: 24px;
+}
+
+.task-content {
+    flex-grow: 1;
+    cursor: pointer;
     color: #4d4d4d;
 }
 
-.del-btn {
-    display: none;
-    background: none;
-    border: none;
-    color: #af5b5e;
-    font-size: 20px;
-    cursor: pointer;
-    font-weight: bold;
+.task-content.completed {
+    text-decoration: line-through;
+    color: #d9d9d9;
 }
 
-.task-item-row:hover .del-btn {
-    display: block;
+.icons-container {
+    display: flex;
+    gap: 15px;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: #cc9a9a;
+    transition: color 0.2s;
+}
+
+.edit-btn:hover {
+    color: #007bff;
+}
+
+.delete-btn:hover {
+    color: #af5b5e;
+}
+
+.edit-input {
+    font-size: 24px;
+    width: 80%;
+    border: 1px solid #ccc;
+    outline: none;
+    padding: 5px;
 }
 
 .footer-row {
     padding: 10px 15px;
     color: #777;
     font-size: 14px;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
 }
 
-.empty-msg {
-    padding: 20px 40px;
-    color: #ccc;
-    font-style: italic;
+.clear-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #777;
+    font-size: 12px;
 }
 
-.page-stack { height: 5px; background: white; border: 1px solid #ddd; border-top: none; margin: 0 auto; }
+.clear-btn:hover {
+    text-decoration: underline;
+}
+
+.page-stack {
+    height: 5px;
+    background: white;
+    border: 1px solid #ddd;
+    border-top: none;
+    margin: 0 auto;
+}
 .stack-1 { width: 99%; }
 .stack-2 { width: 98%; }

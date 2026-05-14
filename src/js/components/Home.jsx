@@ -1,19 +1,28 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 
-const Home = (props) => {
+const Home = ({ tasks, addTask, deleteTask, toggleTask, updateTaskLabel, clearAll, loading }) => {
     const [inputValue, setInputValue] = useState("");
+    const [editValue, setEditValue] = useState("");
+    const [editingId, setEditingId] = useState(null);
     const [error, setError] = useState(false);
 
     const handleKeyPress = (e) => {
         if (e.key === "Enter") {
-            if (inputValue.trim() === "" || inputValue.trim().length < 3) {
+            if (inputValue.trim().length < 3) {
                 setError(true);
             } else {
-                props.addTask(inputValue.trim());
+                addTask(inputValue.trim());
                 setInputValue(""); 
                 setError(false);
             }
+        }
+    };
+
+    const handleEditSave = (id) => {
+        if (editValue.trim().length >= 3) {
+            updateTaskLabel(id, editValue.trim());
+            setEditingId(null);
         }
     };
 
@@ -21,7 +30,13 @@ const Home = (props) => {
         <div className="todo-container">
             <h1 className="todo-header">Tasks</h1>
             
-            <div className="todo-card-body">
+            <div className="todo-card-body position-relative">
+                {loading && (
+                    <div className="spinner-overlay">
+                        <div className="spinner-border text-primary" role="status"></div>
+                    </div>
+                )}
+
                 <ul className="list-unstyled m-0 p-0">
                     <li className="input-row">
                         <input
@@ -34,59 +49,57 @@ const Home = (props) => {
                         />
                     </li>
                     
-                    {error && (
-                        <li className="error-message">
-                            The task must have at least 3 characters.
-                        </li>
-                    )}
+                    {error && <li className="error-message">Minimum 3 characters required</li>}
 
-                    {props.tasks.length === 0 ? (
+                    {tasks.length === 0 ? (
                         <li className="empty-msg">No tasks, add a new task</li>
                     ) : (
-                        props.tasks.map((task, index) => (
-                            <li key={index} className="task-item-row">
-                                <span className="task-content">
-                                    {typeof task === "object" ? task.label : task}
-                                </span>
-                                <button 
-                                    className="del-btn" 
-                                    onClick={() => props.deleteTask(index)}
-                                >
-                                    <i className="fas fa-times"></i>
-                                </button>
+                        tasks.map((task) => (
+                            <li key={task.id} className="task-item-row d-flex justify-content-between align-items-center">
+                                {editingId === task.id ? (
+                                    <input 
+                                        className="edit-input"
+                                        value={editValue}
+                                        onChange={(e) => setEditValue(e.target.value)}
+                                        onBlur={() => handleEditSave(task.id)}
+                                        onKeyDown={(e) => e.key === "Enter" && handleEditSave(task.id)}
+                                        autoFocus
+                                    />
+                                ) : (
+                                    <span 
+                                        className={`task-content ${task.is_done ? "completed" : ""}`}
+                                        onClick={() => toggleTask(task)}
+                                    >
+                                        {task.label}
+                                    </span>
+                                )}
+
+                                <div className="action-buttons">
+                                    <button 
+                                        className="btn-action edit-icon" 
+                                        onClick={() => { setEditingId(task.id); setEditValue(task.label); }}
+                                    >
+                                        <i className="fas fa-pencil-alt"></i>
+                                    </button>
+                                    <button 
+                                        className="btn-action delete-icon" 
+                                        onClick={() => deleteTask(task.id)}
+                                    >
+                                        <i className="fas fa-trash"></i>
+                                    </button>
+                                </div>
                             </li>
                         ))
                     )}
 
-                    <li className="footer-row d-flex justify-content-between align-items-center">
-                        <span>
-                            {props.tasks.length} item{props.tasks.length !== 1 ? "s" : ""} left
-                        </span>
-                        
-                        {props.tasks.length > 0 && (
-                            <button 
-                                className="btn btn-link btn-sm text-muted p-0" 
-                                style={{ textDecoration: "none", fontSize: "12px" }}
-                                onClick={props.clearAll}
-                            >
-                                Clear all tasks
-                            </button>
-                        )}
+                    <li className="footer-row d-flex justify-content-between">
+                        <span>{tasks.length} items left</span>
+                        <button className="btn-clear" onClick={clearAll}>Clear all</button>
                     </li>
                 </ul>
             </div>
-
-            <div className="page-stack stack-1"></div>
-            <div className="page-stack stack-2"></div>
         </div>
     );
-};
-
-Home.propTypes = {
-    tasks: PropTypes.array.isRequired,
-    addTask: PropTypes.func.isRequired,
-    deleteTask: PropTypes.func.isRequired,
-    clearAll: PropTypes.func.isRequired
 };
 
 export default Home;

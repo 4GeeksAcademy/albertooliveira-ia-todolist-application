@@ -1,76 +1,82 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom/client";
-
 import "../styles/index.css"; 
 import Home from "./components/Home.jsx";
 
 const MainApp = () => {
     const [tasks, setTasks] = useState([]);
+    const [loading, setLoading] = useState(false);
     
     const username = "alberto_user"; 
-    const apiUrl = `https://playground.4geeks.com/todo/users/${username}`;
+    const baseUrl = `https://playground.4geeks.com/todo`;
 
     const getTasks = () => {
-        fetch(apiUrl)
+        setLoading(true);
+        fetch(`${baseUrl}/users/${username}`)
             .then(resp => {
-                if (resp.status === 404) {
-                    throw new Error("Usuario no encontrado. Asegúrate de crearlo primero.");
-                }
-                if (!resp.ok) throw new Error("Error al cargar las tareas");
+                if (resp.status === 404) return createUser();
+                if (!resp.ok) throw new Error("Error");
                 return resp.json();
             })
-            .then(data => {
-                setTasks(data.todos || []);
-            })
-            .catch(error => console.error("Error inicial:", error));
+            .then(data => { if (data) setTasks(data.todos || []); })
+            .catch(error => console.error(error))
+            .finally(() => setLoading(false));
     };
 
-    useEffect(() => {
-        getTasks();
-    }, []);
-
-    const syncWithServer = (updatedList) => {
-        fetch(apiUrl, {
-            method: "PUT",
-            body: JSON.stringify(updatedList),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-        .then(resp => {
-            if (!resp.ok) throw new Error("No se pudo sincronizar con el servidor");
-            return resp.json();
-        })
-        .then(() => {
-            setTasks(updatedList);
-        })
-        .catch(error => console.error("Error de sincronización:", error));
+    const createUser = () => {
+        fetch(`${baseUrl}/users/${username}`, { method: "POST" }).then(() => getTasks());
     };
-    
+
+    useEffect(() => { getTasks(); }, []);
+
     const addTask = (newLabel) => {
-        const newTask = { label: newLabel, is_done: false };
-        const newList = [...tasks, newTask];
-        syncWithServer(newList);
+        setLoading(true);
+        fetch(`${baseUrl}/todos/${username}`, {
+            method: "POST",
+            body: JSON.stringify({ label: newLabel, is_done: false }),
+            headers: { "Content-Type": "application/json" }
+        })
+        .then(resp => resp.ok ? resp.json() : null)
+        .then(newTask => { if (newTask) setTasks([...tasks, newTask]); })
+        .finally(() => setLoading(false));
     };
 
-    const deleteTask = (indexToDelete) => {
-        const newList = tasks.filter((_, index) => index !== indexToDelete);
-        syncWithServer(newList);
+    const deleteTask = (id) => {
+        setLoading(true);
+        fetch(`${baseUrl}/todos/${id}`, { method: "DELETE" })
+        .then(resp => { if (resp.ok) setTasks(tasks.filter(t => t.id !== id)); })
+        .finally(() => setLoading(false));
+    };
+
+    const updateTask = (id, updatedData) => {
+        setLoading(true);
+        fetch(`${baseUrl}/todos/${id}`, {
+            method: "PUT",
+            body: JSON.stringify(updatedData),
+            headers: { "Content-Type": "application/json" }
+        })
+        .then(resp => resp.ok ? resp.json() : null)
+        .then(updatedTask => {
+            if (updatedTask) setTasks(tasks.map(t => t.id === id ? updatedTask : t));
+        })
+        .finally(() => setLoading(false));
     };
 
     const clearAll = () => {
-        syncWithServer([]);
+        setLoading(true);
+        const deletePromises = tasks.map(t => fetch(`${baseUrl}/todos/${t.id}`, { method: "DELETE" }));
+        Promise.all(deletePromises).then(() => setTasks([])).finally(() => setLoading(false));
     };
 
     return (
-        <div className="main-wrapper">
-            <Home 
-                tasks={tasks} 
-                addTask={addTask} 
-                deleteTask={deleteTask} 
-                clearAll={clearAll} 
-            />
-        </div>
+        <Home 
+            tasks={tasks} 
+            addTask={addTask} 
+            deleteTask={deleteTask} 
+            updateTask={updateTask}
+            clearAll={clearAll} 
+            loading={loading}
+        />
     );
 };
 
