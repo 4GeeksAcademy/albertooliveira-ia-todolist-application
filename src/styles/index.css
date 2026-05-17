@@ -28,9 +28,7 @@ body {
 
 .spinner-loader {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 0; left: 0; right: 0;
     background: rgba(255, 255, 255, 0.8);
     color: #d9534f;
     text-align: center;
@@ -66,6 +64,7 @@ body {
     flex-grow: 1;
     cursor: pointer;
     color: #4d4d4d;
+    transition: color 0.2s;
 }
 
 .task-content.completed {
@@ -87,20 +86,12 @@ body {
     transition: color 0.2s;
 }
 
-.edit-btn:hover {
-    color: #007bff;
+.check-btn:hover {
+    color: #28a745;
 }
 
 .delete-btn:hover {
-    color: #af5b5e;
-}
-
-.edit-input {
-    font-size: 24px;
-    width: 80%;
-    border: 1px solid #ccc;
-    outline: none;
-    padding: 5px;
+    color: #dc3545;
 }
 
 .footer-row {
@@ -122,6 +113,13 @@ body {
 
 .clear-btn:hover {
     text-decoration: underline;
+}
+
+.empty-msg {
+    padding: 20px;
+    color: #999;
+    text-align: center;
+    font-size: 18px;
 }
 
 .page-stack {

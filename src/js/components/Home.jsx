@@ -1,42 +1,21 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 
-const Home = ({ tasks, addTask, deleteTask, toggleTask, updateTaskLabel, clearAll, loading }) => {
+const Home = ({ tasks, addTask, deleteTask, toggleTask, clearAll, loading }) => {
     const [inputValue, setInputValue] = useState("");
-    const [editValue, setEditValue] = useState("");
-    const [editingId, setEditingId] = useState(null);
-    const [error, setError] = useState(false);
 
     const handleKeyPress = (e) => {
-        if (e.key === "Enter") {
-            if (inputValue.trim().length < 3) {
-                setError(true);
-            } else {
-                addTask(inputValue.trim());
-                setInputValue(""); 
-                setError(false);
-            }
-        }
-    };
-
-    const handleEditSave = (id) => {
-        if (editValue.trim().length >= 3) {
-            updateTaskLabel(id, editValue.trim());
-            setEditingId(null);
+        if (e.key === "Enter" && inputValue.trim().length >= 3) {
+            addTask(inputValue.trim());
+            setInputValue("");
         }
     };
 
     return (
         <div className="todo-container">
             <h1 className="todo-header">Tasks</h1>
-            
-            <div className="todo-card-body position-relative">
-                {loading && (
-                    <div className="spinner-overlay">
-                        <div className="spinner-border text-primary" role="status"></div>
-                    </div>
-                )}
-
+            <div className="todo-card-body">
+                {loading && <div className="spinner-loader">Cargando...</div>}
                 <ul className="list-unstyled m-0 p-0">
                     <li className="input-row">
                         <input
@@ -48,58 +27,50 @@ const Home = ({ tasks, addTask, deleteTask, toggleTask, updateTaskLabel, clearAl
                             onKeyDown={handleKeyPress}
                         />
                     </li>
-                    
-                    {error && <li className="error-message">Minimum 3 characters required</li>}
 
                     {tasks.length === 0 ? (
                         <li className="empty-msg">No tasks, add a new task</li>
                     ) : (
                         tasks.map((task) => (
-                            <li key={task.id} className="task-item-row d-flex justify-content-between align-items-center">
-                                {editingId === task.id ? (
-                                    <input 
-                                        className="edit-input"
-                                        value={editValue}
-                                        onChange={(e) => setEditValue(e.target.value)}
-                                        onBlur={() => handleEditSave(task.id)}
-                                        onKeyDown={(e) => e.key === "Enter" && handleEditSave(task.id)}
-                                        autoFocus
-                                    />
-                                ) : (
-                                    <span 
-                                        className={`task-content ${task.is_done ? "completed" : ""}`}
-                                        onClick={() => toggleTask(task)}
-                                    >
-                                        {task.label}
-                                    </span>
-                                )}
-
-                                <div className="action-buttons">
-                                    <button 
-                                        className="btn-action edit-icon" 
-                                        onClick={() => { setEditingId(task.id); setEditValue(task.label); }}
-                                    >
-                                        <i className="fas fa-pencil-alt"></i>
+                            <li key={task.id} className="task-item-row">
+                                <span 
+                                    className={`task-content ${task.is_done ? "completed" : ""}`}
+                                    onClick={() => toggleTask(task)}
+                                >
+                                    {task.label}
+                                </span>
+                                
+                                <div className="icons-container">
+                                    <button className="icon-btn check-btn" onClick={() => toggleTask(task)}>
+                                        <i className={task.is_done ? "fas fa-check-circle" : "far fa-circle"}></i>
                                     </button>
-                                    <button 
-                                        className="btn-action delete-icon" 
-                                        onClick={() => deleteTask(task.id)}
-                                    >
-                                        <i className="fas fa-trash"></i>
+                                    <button className="icon-btn delete-btn" onClick={() => deleteTask(task.id)}>
+                                        <i className="fas fa-times"></i>
                                     </button>
                                 </div>
                             </li>
                         ))
                     )}
 
-                    <li className="footer-row d-flex justify-content-between">
-                        <span>{tasks.length} items left</span>
-                        <button className="btn-clear" onClick={clearAll}>Clear all</button>
+                    <li className="footer-row">
+                        <span>{tasks.length} item{tasks.length !== 1 ? "s" : ""} left</span>
+                        <button className="clear-btn" onClick={clearAll}>Clear all</button>
                     </li>
                 </ul>
             </div>
+            <div className="page-stack stack-1"></div>
+            <div className="page-stack stack-2"></div>
         </div>
     );
+};
+
+Home.propTypes = {
+    tasks: PropTypes.array.isRequired,
+    addTask: PropTypes.func.isRequired,
+    deleteTask: PropTypes.func.isRequired,
+    toggleTask: PropTypes.func.isRequired,
+    clearAll: PropTypes.func.isRequired,
+    loading: PropTypes.bool.isRequired
 };
 
 export default Home;
